@@ -83,6 +83,41 @@ To assess whether 7/9 is meaningful, we simulated random log-uniform Yukawas in 
 
 See `report.md` for full analysis including Monte Carlo stability, ratio fits, and method critique.
 
+### Charm Robustness Study: Is the charm coincidence real?
+
+The charm result (c = 1.002) looked striking, so we tested whether it survives **scale-consistent analysis**:
+
+```bash
+python -m alc_yukawa --config config/charm_robustness.yaml charm-study
+```
+
+**TEST A** (vary α, keep y_c fixed):
+| Scale | α(μ) | c = y_c/α | d = \|ln(c)\| |
+|-------|------|-----------|---------------|
+| α(0) | 1/137.04 | 1.002 | 0.002 |
+| α(m_τ) | 1/133.5 | 0.976 | 0.024 |
+| α(m_Z) | 1/128.0 | 0.936 | 0.067 |
+
+**TEST B** (run m_c and α to common scale via QCD):
+| Scale | m_c(μ) | y_c(μ) | α(μ) | c | d |
+|-------|--------|--------|------|---|---|
+| Baseline | 1.273 GeV | 0.00731 | 1/137 | **1.002** | 0.002 |
+| μ = m_τ | 1.182 GeV | 0.00679 | 1/133.5 | 0.906 | 0.099 |
+| μ = m_Z | 0.692 GeV | 0.00397 | 1/128 | 0.509 | 0.676 |
+
+**Key result:**
+| Analysis | d = \|ln(c)\| | p-value | Significant? |
+|----------|---------------|---------|--------------|
+| Baseline α(0) only | 0.002 | 0.0003 | Yes |
+| Test A (look-elsewhere) | 0.002 | 0.001 | Yes |
+| **Test B (common scale)** | **0.099** | **0.143** | **No** |
+
+**Conclusion: The charm coincidence is a scale/scheme artifact.**
+
+The baseline comparison used mismatched scales (y_c at μ ~ 1.3 GeV vs α at q² = 0). At compatible renormalization scales, charm's coefficient degrades to c = 0.91 with p = 0.14—not statistically significant.
+
+See `report_charm_robustness.md` for full details.
+
 ## Notes / caveats
 
 - **Quark masses are scheme/scale dependent.** This repo uses the PDG *summary table* masses:
