@@ -118,6 +118,49 @@ The baseline comparison used mismatched scales (y_c at μ ~ 1.3 GeV vs α at q²
 
 See `report_charm_robustness.md` for full details.
 
+### Global Scale-Consistent Test (Final Analysis)
+
+After finding that the charm coincidence was a scale artifact, we implemented a **global** test: Are ALL SM Yukawas simultaneously close to y = c·α^n when both y and α are evaluated at the **same** renormalization scale μ?
+
+```bash
+python -m alc_yukawa --config config/common_scale_global.yaml global-study
+```
+
+**Method:**
+- Evaluate all 9 fermion Yukawas and α at common scales (μ = m_τ, μ = m_Z)
+- Use QCD running for quark masses; leptons are pole masses
+- Test statistic: T(μ) = Σ|ln(c_i)| (sum over all fermions)
+- 200,000 null simulations with log-uniform random Yukawas
+
+**Results at μ = m_τ (1.78 GeV):**
+| Particle | Yukawa | n | c | ln(c) | In Bounds |
+|----------|--------|---|-------|-------|-----------|
+| t | 0.9914 | 0 | 0.991 | -0.009 | Yes |
+| b | 0.0275 | 1 | 3.67 | 1.30 | Yes |
+| c | 0.0068 | 1 | 0.906 | -0.099 | Yes |
+| s | 6.21e-4 | 2 | 11.1 | 2.40 | **No** |
+| d | 3.13e-5 | 2 | 0.557 | -0.585 | Yes |
+| u | 1.46e-5 | 2 | 0.260 | -1.35 | Yes |
+| tau | 0.0102 | 1 | 1.36 | 0.31 | Yes |
+| mu | 6.07e-4 | 2 | 10.8 | 2.38 | **No** |
+| e | 2.94e-6 | 3 | 7.01 | 1.95 | Yes |
+
+**Pass count: 7/9** at both scales
+
+**Null hypothesis testing:**
+| Metric | μ = m_τ | μ = m_Z | Global |
+|--------|---------|---------|--------|
+| T(μ) = Σ\|ln(c)\| | 10.59 | 10.97 | min = 10.59 |
+| p-value | 0.34 | 0.43 | **0.58** |
+| Pass [0.1,10] | 7/9 (p=0.97) | 7/9 (p=0.99) | — |
+| Pass [0.5,2] | 3/9 (p=0.84) | 2/9 (p=0.99) | — |
+
+**Excluding top quark:** p_global = 0.83 (even worse)
+
+**Conclusion: The α-ladder hypothesis finds NO statistically significant support in the SM Yukawa spectrum.** When both Yukawas and α are evaluated at consistent renormalization scales, the observed pattern is no better than random numbers. The previously noted charm coincidence (c ≈ 1) was an artifact of comparing quantities at mismatched scales.
+
+See `report_global_common_scale.md` for full details.
+
 ## Notes / caveats
 
 - **Quark masses are scheme/scale dependent.** This repo uses the PDG *summary table* masses:
