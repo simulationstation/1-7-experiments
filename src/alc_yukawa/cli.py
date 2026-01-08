@@ -6,6 +6,7 @@ import sys
 
 from .pipeline import run_fit
 from .charm_study import run_charm_study
+from .global_study import run_global_study
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -37,6 +38,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override output dir (otherwise uses config).",
     )
 
+    glob = sub.add_parser("global-study", help="Run the global common-scale alpha-ladder test.")
+    glob.add_argument(
+        "--output-dir",
+        type=str,
+        default=None,
+        help="Override output dir (otherwise uses config).",
+    )
+
     return p
 
 
@@ -55,6 +64,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "charm-study":
         out_dir = Path(args.output_dir) if args.output_dir else None
         run_charm_study(cfg_path=cfg_path, output_dir_override=out_dir)
+        return 0
+
+    if args.cmd == "global-study":
+        out_dir = Path(args.output_dir) if args.output_dir else None
+        run_global_study(cfg_path=cfg_path, output_dir_override=out_dir)
         return 0
 
     return 1

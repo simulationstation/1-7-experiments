@@ -1,0 +1,126 @@
+# Global Common-Scale Alpha-Ladder Test Configuration
+# =====================================================
+# PRE-REGISTERED ANALYSIS
+#
+# This config tests whether SM Yukawas show global alpha-ladder structure
+# when evaluated at consistent renormalization scales.
+#
+# Key design choices (fixed before seeing results):
+# - Reference scales: m_tau (~1.78 GeV), m_Z (~91.2 GeV)
+# - NO alpha(0): not a renormalization scale in the same sense
+# - Quarks: QCD running of MS-bar masses using 1-loop RGE
+# - Leptons: Pole masses (constant), as QED running is negligible at this precision
+# - Test statistic: T(μ) = Σ |ln c_i(μ)| over all particles
+# - Two analysis versions: (i) all 9 particles, (ii) excluding top (robustness)
+
+analysis:
+  name: "global_common_scale_ladder_test"
+  version: "0.1.0"
+  output_dir: "artifacts"
+  random_seed: 12345
+
+constants:
+  vev_GeV: 246.21965  # Same as baseline analysis
+
+data:
+  pdg_snapshot: "data/pdg_masses_2024_2025.json"
+  running_constants: "data/running_constants_pdg.json"
+  convert_90cl_to_1sigma: true
+  cl90_to_1sigma_factor: 1.6448536269514722
+
+# Pre-registered reference scales
+# WHY THESE SCALES:
+# - m_tau (~1.78 GeV): Near the GeV regime, PDG provides alpha_hat(m_tau)
+# - m_Z (~91.2 GeV): Canonical EW scale, PDG provides alpha_hat(m_Z)
+# NOT INCLUDED:
+# - alpha(0): Not a renormalization scale; creates scale mismatch artifacts
+reference_scales:
+  - name: "m_tau"
+    mu_GeV: 1.77686
+    alpha_key: "alpha_hat_m_tau"
+  - name: "m_Z"
+    mu_GeV: 91.1876
+    alpha_key: "alpha_hat_m_Z"
+
+# Running method specification
+running:
+  quarks:
+    method: "qcd_1loop"
+    description: "1-loop QCD running of MS-bar masses"
+    # Reference scales for each quark in the PDG data:
+    # u, d, s: μ = 2 GeV
+    # c: μ = m_c
+    # b: μ = m_b
+    # t: pole mass (special handling)
+  leptons:
+    method: "constant"
+    description: "Pole masses (QED running negligible at this precision)"
+  top_quark:
+    handling: "pole_mass_direct"
+    description: "Top uses PDG direct measurement; treated as pole mass"
+    note: "Top scheme issues are significant; we run BOTH with and without top"
+
+# Fit parameters (same as baseline)
+model:
+  exponent_range:
+    n_min: 0
+    n_max: 12
+  coeff_bounds_legacy:
+    c_min: 0.1
+    c_max: 10.0
+    name: "W1"
+  coeff_bounds_tight:
+    c_min: 0.5
+    c_max: 2.0
+    name: "W2"
+  assignment_rule: "min_abs_logc"
+
+# Test statistics (pre-registered)
+statistics:
+  primary:
+    name: "T"
+    formula: "sum_i |ln(c_i)|"
+    description: "Sum of absolute log-coefficients; lower means closer to ladder"
+  secondary:
+    - name: "T2"
+      formula: "sum_i (ln(c_i))^2"
+      description: "Sum of squared log-coefficients"
+    - name: "pass_count_W1"
+      formula: "count(c_i in [0.1, 10])"
+      description: "Number passing legacy bounds"
+    - name: "pass_count_W2"
+      formula: "count(c_i in [0.5, 2])"
+      description: "Number passing tight bounds"
+
+# Null hypothesis testing
+monte_carlo:
+  n_trials: 200000
+  null_model: "log_uniform_yukawa"
+  yukawa_range:
+    log10_min: -6
+    log10_max: 0
+  description: |
+    For each trial:
+    1. Draw 9 random Yukawas log-uniform in [1e-6, 1]
+    2. Fit each to alpha-ladder (same procedure as real data)
+    3. Compute T(μ) for each scale
+    4. T_best = min over μ of T(μ)
+    P-values:
+    - p_per_scale(μ) = P(T_trial(μ) <= T_obs(μ))
+    - p_global = P(T_best_trial <= T_best_obs)
+
+# Analysis versions
+versions:
+  - name: "all_9"
+    particles: ["e", "mu", "tau", "u", "d", "s", "c", "b", "t"]
+    description: "All 9 SM fermions"
+  - name: "exclude_top"
+    particles: ["e", "mu", "tau", "u", "d", "s", "c", "b"]
+    description: "8 fermions (top excluded due to scheme ambiguity)"
+    note: "Robustness check, not tuned choice"
+
+reports:
+  write_json: true
+  write_csv: true
+  make_plots: true
+  write_markdown: true
