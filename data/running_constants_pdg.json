@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "title": "Running coupling constants for charm robustness study",
+    "created_utc": "2026-01-07",
+    "sources": [
+      "PDG 2024 Review: Electroweak Model and Constraints on New Physics (rpp2024-rev-standard-model.pdf)",
+      "PDG 2024 Review: Quantum Chromodynamics (rpp2024-rev-qcd.pdf)",
+      "CODATA 2018 for alpha(0)"
+    ],
+    "notes": [
+      "alpha_hat values are MS-bar running QED coupling",
+      "alpha_s is MS-bar strong coupling",
+      "All uncertainties are 1-sigma unless noted"
+    ]
+  },
+  "constants": {
+    "alpha_0": {
+      "value": 0.0072973525693,
+      "inverse": 137.035999084,
+      "uncertainty": 0.0000000000011,
+      "description": "Fine-structure constant at q^2=0 (low-energy limit)",
+      "source": "CODATA 2018 via PDG"
+    },
+    "alpha_hat_m_tau": {
+      "value": 0.007492,
+      "inverse": 133.472,
+      "uncertainty_inverse": 0.007,
+      "n_f": 4,
+      "description": "MS-bar QED coupling at mu=m_tau with 4 active quark flavors",
+      "source": "PDG 2024 Electroweak Review Table 10.2",
+      "note": "Interpolated from PDG running; 4 flavors active below m_b"
+    },
+    "alpha_hat_m_Z": {
+      "value": 0.0078151,
+      "inverse": 127.951,
+      "uncertainty_inverse": 0.009,
+      "n_f": 5,
+      "description": "MS-bar QED coupling at mu=m_Z with 5 active quark flavors",
+      "source": "PDG 2024 Electroweak Review Eq. 10.7"
+    },
+    "alpha_s_m_Z": {
+      "value": 0.1180,
+      "uncertainty": 0.0009,
+      "description": "Strong coupling constant at mu=m_Z (world average)",
+      "source": "PDG 2024 QCD Review"
+    },
+    "alpha_s_m_tau": {
+      "value": 0.325,
+      "uncertainty": 0.015,
+      "description": "Strong coupling at mu=m_tau from tau decays",
+      "source": "PDG 2024 QCD Review (tau decay determination)"
+    }
+  },
+  "reference_scales_GeV": {
+    "m_tau": {
+      "value": 1.77686,
+      "uncertainty": 0.00012,
+      "source": "PDG 2024"
+    },
+    "m_Z": {
+      "value": 91.1876,
+      "uncertainty": 0.0021,
+      "source": "PDG 2024"
+    },
+    "m_c_at_m_c": {
+      "value": 1.273,
+      "uncertainty": 0.0046,
+      "source": "PDG 2024 (MS-bar at mu=m_c)"
+    }
+  },
+  "qcd_running_parameters": {
+    "description": "Parameters for MS-bar quark mass running",
+    "beta_0_coefficients": {
+      "n_f_3": 9.0,
+      "n_f_4": 8.333333333,
+      "n_f_5": 7.666666667,
+      "formula": "beta_0 = 11 - 2*n_f/3"
+    },
+    "gamma_m_0": {
+      "value": 4.0,
+      "description": "1-loop mass anomalous dimension coefficient (gamma_m = gamma_m_0 * alpha_s / pi)"
+    },
+    "notes": [
+      "Running formula: m(mu2)/m(mu1) = [alpha_s(mu2)/alpha_s(mu1)]^(gamma_m_0/beta_0)",
+      "This is the leading-order result; higher orders add O(alpha_s) corrections"
+    ]
+  }
+}

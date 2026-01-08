@@ -1,0 +1,47 @@
+# Charm Robustness Study Configuration
+# =====================================
+# This config is for the charm-study subcommand, which tests whether
+# the y_c ≈ α coincidence is robust under scale-consistent comparisons.
+#
+# PRE-REGISTERED CHOICES (defined before looking at results):
+# - Reference scales: m_c, m_tau, m_Z (fixed, no tuning)
+# - Running method: 1-loop QCD for quark masses
+# - Null model: log-uniform Yukawas in [1e-6, 1]
+# - Look-elsewhere: account for testing multiple α values / scales
+
+analysis:
+  name: "charm_robustness_study"
+  version: "0.1.0"
+  output_dir: "artifacts"
+  random_seed: 12345
+
+constants:
+  # Use same vev as preregistered analysis for consistency
+  vev_GeV: 246.21965
+
+data:
+  # PDG masses (same as main analysis)
+  pdg_snapshot: "data/pdg_masses_2024_2025.json"
+  # Running coupling constants (new file)
+  running_constants: "data/running_constants_pdg.json"
+
+# Pre-registered reference scales
+# WHY THESE SCALES:
+# - m_c: where m_c(m_c) is defined (baseline)
+# - m_tau: PDG provides alpha-hat at m_tau; it's near the GeV regime
+# - m_Z: canonical electroweak scale; PDG provides alpha-hat at m_Z
+reference_scales:
+  - "m_c"    # ~1.27 GeV
+  - "m_tau"  # ~1.78 GeV
+  - "m_Z"    # ~91.2 GeV
+
+monte_carlo:
+  n_trials: 100000
+  # Note: We use the same null model as the main report:
+  # y drawn log-uniform from [1e-6, 1]
+
+reports:
+  write_json: true
+  write_csv: true
+  make_plots: true
+  write_markdown: true
